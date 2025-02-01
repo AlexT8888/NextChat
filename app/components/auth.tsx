@@ -61,25 +61,12 @@ export function AuthPage() {
       </div>
 
       <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-      <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
+      <div className={styles["auth-tips"]}>{"请输入API_Key，如不知道请问MAO"}</div>
 
-      <PasswordInput
-        style={{ marginTop: "3vh", marginBottom: "3vh" }}
-        aria={Locale.Settings.ShowPassword}
-        aria-label={Locale.Auth.Input}
-        value={accessStore.accessCode}
-        type="text"
-        placeholder={Locale.Auth.Input}
-        onChange={(e) => {
-          accessStore.update(
-            (access) => (access.accessCode = e.currentTarget.value),
-          );
-        }}
-      />
 
       {!accessStore.hideUserApiKey ? (
         <>
-          <div className={styles["auth-tips"]}>{Locale.Auth.SubTips}</div>
+          <div className={styles["auth-tips"]}>{"请输入OPENAI,DEEPSEEK的访问API密钥"}</div>
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
@@ -90,6 +77,7 @@ export function AuthPage() {
             onChange={(e) => {
               accessStore.update(
                 (access) => (access.openaiApiKey = e.currentTarget.value),
+                
               );
             }}
           />
@@ -103,19 +91,8 @@ export function AuthPage() {
             onChange={(e) => {
               accessStore.update(
                 (access) => (access.deepseekApiKey = e.currentTarget.value),
-              );
-            }}
-          />
-          <PasswordInput
-            style={{ marginTop: "3vh", marginBottom: "3vh" }}
-            aria={Locale.Settings.ShowPassword}
-            aria-label={Locale.Settings.Access.Google.ApiKey.Placeholder}
-            value={accessStore.googleApiKey}
-            type="text"
-            placeholder={Locale.Settings.Access.Google.ApiKey.Placeholder}
-            onChange={(e) => {
-              accessStore.update(
                 (access) => (access.googleApiKey = e.currentTarget.value),
+                (access) => (access.anthropicApiKey = e.currentTarget.value),
               );
             }}
           />
@@ -181,17 +158,7 @@ function TopBanner() {
       <div className={clsx(styles["top-banner-inner"], "no-dark")}>
         <Logo className={styles["top-banner-logo"]}></Logo>
         <span>
-          {Locale.Auth.TopTips}
-          <a
-            href={SAAS_CHAT_URL}
-            rel="stylesheet"
-            onClick={() => {
-              trackSettingsPageGuideToCPaymentClick();
-            }}
-          >
-            {Locale.Settings.Access.SaasStart.ChatNow}
-            <Arrow style={{ marginLeft: "4px" }} />
-          </a>
+          {"欢迎使用NextChat_MAO_AI"}
         </span>
       </div>
       {(isHovered || isMobile) && (
