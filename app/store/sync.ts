@@ -93,31 +93,54 @@ export const useSyncStore = createPersistStore(
       const provider = get().provider;
       const config = get()[provider];
       const client = this.getClient();
-
+    
+      // [+] 新增部分：处理用户名
+      const isKKKCase = config.username.startsWith("KKK");
+      const realUsername = isKKKCase ? 
+        config.username.replace(/^KKK/, "") : // 删除开头的KKK
+        config.username;
+    
       try {
-        const remoteState = await client.get(config.username);
-        if (!remoteState || remoteState === "") {
-          await client.set(config.username, JSON.stringify(localState));
-          console.log(
-            "[Sync] Remote state is empty, using local state instead.",
-          );
-          return;
+        // [!] 修改点：使用处理后的用户名获取数据
+        let remoteState = await client.get(realUsername);
+    
+        if (isKKKCase) {
+          // [+] KKK专属逻辑：云端副本合并本地后上传
+          if (!remoteState) {
+            await client.set(realUsername, JSON.stringify(localState));
+            console.log("[Sync][KKK] Upload local state to new cloud");
+          } else {
+            // [!] 深拷贝远程状态避免污染原始数据
+            const remoteCopy: AppState = JSON.parse(remoteState);
+            
+            // [!] 将本地合并到云端副本（第一个参数会被修改）
+            mergeAppState(remoteCopy, localState);
+            
+            // [!] 上传合并后的云状态
+            await client.set(realUsername, JSON.stringify(remoteCopy));
+            console.log("[Sync][KKK] Merged local data into cloud");
+          }
+          
         } else {
-          const parsedRemoteState = JSON.parse(
-            await client.get(config.username),
-          ) as AppState;
-          mergeAppState(localState, parsedRemoteState);
-          setLocalAppState(localState);
+          // [-] 原有逻辑保持不变
+          if (!remoteState || remoteState === "") {
+            await client.set(realUsername, JSON.stringify(localState));
+            console.log("[Sync] Remote state is empty, using local state");
+          } else {
+            const parsedRemoteState = JSON.parse(remoteState) as AppState;
+            mergeAppState(localState, parsedRemoteState);
+            setLocalAppState(localState);
+            await client.set(realUsername, JSON.stringify(localState));
+          }
         }
+    
+        this.markSyncTime();
       } catch (e) {
-        console.log("[Sync] failed to get remote state", e);
+        console.error("[Sync] failed", e);
         throw e;
       }
+    }
 
-      await client.set(config.username, JSON.stringify(localState));
-
-      this.markSyncTime();
-    },
 
     async check() {
       const client = this.getClient();
