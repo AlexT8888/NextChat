@@ -95,7 +95,6 @@ export function AuthPage() {
                 access.anthropicApiKey = e.currentTarget.value;
                 return access;
               });
-              );
             }}
           />
         </>
