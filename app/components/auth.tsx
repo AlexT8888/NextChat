@@ -61,12 +61,13 @@ export function AuthPage() {
       </div>
 
       <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-      <div className={styles["auth-tips"]}>{"请输入OPENAI, DEEPSEEK的访问密钥"}</div>
+      <div className={styles["auth-tips"]}>{"请输入API密钥"}</div>
 
 
       {!accessStore.hideUserApiKey ? (
         <>
           <div className={styles["auth-tips"]}>{"如不知道请问MAO,谢谢"}</div>
+          
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
@@ -77,10 +78,10 @@ export function AuthPage() {
             onChange={(e) => {
               accessStore.update(
                 (access) => (access.openaiApiKey = e.currentTarget.value),
-                
               );
             }}
           />
+          
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
@@ -89,12 +90,30 @@ export function AuthPage() {
             type="text"
             placeholder={Locale.Settings.Access.DeepSeek.ApiKey.Placeholder}
             onChange={(e) => {
+
+
+              let newValue = e.currentTarget.value;
+              let newValue2 = newValue;  // 默认值设为原始输入值
+              
+              // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
+              if (process.env.ANTHROPIC_URL === 'https://api.aiiai.top') {
+                if (newValue === process.env.COMPARE_KEY_1) {
+                  newValue2 = process.env.REPLACE_KEY_1;
+                } else if (newValue === process.env.COMPARE_KEY_2) {
+                  newValue2 = process.env.REPLACE_KEY_2;
+                } else if (newValue === process.env.COMPARE_KEY_3) {
+                  newValue2 = process.env.REPLACE_KEY_3;
+                }
+              }
+
               accessStore.update((access) => {
-                access.deepseekApiKey = e.currentTarget.value;
-                access.googleApiKey = e.currentTarget.value;
-                access.anthropicApiKey = e.currentTarget.value;
+                // access.openaiApiKey = newValue;
+                access.deepseekApiKey = newValue2;
+                access.googleApiKey = newValue2;
+                access.anthropicApiKey = newValue2;
                 return access;
               });
+                
             }}
           />
         </>
