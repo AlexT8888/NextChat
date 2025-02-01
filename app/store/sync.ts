@@ -95,16 +95,22 @@ export const useSyncStore = createPersistStore(
       const client = this.getClient();
     
       try {
-        const remoteState = await client.get(config.username);
+        let targetUsername = config.username;
+        // 如果以KKK开头，去掉KKK
+        if (config.username.startsWith("KKK")) {
+          targetUsername = config.username.substring(3);
+        }
+    
+        const remoteState = await client.get(targetUsername);
         if (!remoteState || remoteState === "") {
-          await client.set(config.username, JSON.stringify(localState));
+          await client.set(targetUsername, JSON.stringify(localState));
           console.log(
             "[Sync] Remote state is empty, using local state instead.",
           );
           return;
         } else {
           const parsedRemoteState = JSON.parse(
-            await client.get(config.username),
+            await client.get(targetUsername),
           ) as AppState;
     
           if (config.username.startsWith("KKK")) {
@@ -112,12 +118,13 @@ export const useSyncStore = createPersistStore(
             // 合并远程状态到本地状态的副本，保持本地状态不变
             const mergedState = JSON.parse(JSON.stringify(localState)); // 创建本地状态的深拷贝
             mergeAppState(mergedState, parsedRemoteState);
-            // 只更新云端，不更新本地
-            await client.set(config.username, JSON.stringify(mergedState));
+            // 只更新云端，不更新本地，并且保存到去掉KKK后的用户名下
+            await client.set(targetUsername, JSON.stringify(mergedState));
           } else {
             // 如果用户名不以 KKK 开头
             // 直接使用远程状态覆盖本地状态
             setLocalAppState(parsedRemoteState);
+            await client.set(targetUsername, JSON.stringify(parsedRemoteState));
           }
         }
       } catch (e) {
@@ -127,6 +134,7 @@ export const useSyncStore = createPersistStore(
     
       this.markSyncTime();
     },
+
 
     async check() {
       const client = this.getClient();
