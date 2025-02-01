@@ -101,38 +101,45 @@ export const useSyncStore = createPersistStore(
       const cloudUsername = isKKKUser ? username.slice(3) : username;
     
       try {
-        // 获取云端数据（使用实际用户名）
+        // 获取云端时使用映射后的用户名
         const remoteState = await client.get(cloudUsername);
         
         if (!remoteState || remoteState === "") {
-          // 云端无数据时上传本地数据
+          // 初始化同步时也使用映射后的用户名
           await client.set(cloudUsername, JSON.stringify(localState));
-          console.log("[Sync] Remote state is empty, using local state instead.");
+          console.log("[Sync] Init cloud state with:", cloudUsername);
           return;
         } else {
           const parsedRemoteState = JSON.parse(remoteState) as AppState;
     
           if (isKKKUser) {
-            // KKK用户处理流程
-            // 1. 创建本地状态拷贝
-            const mergedState = JSON.parse(JSON.stringify(localState));
-            // 2. 合并云端数据到拷贝
-            mergeAppState(mergedState, parsedRemoteState);
-            // 3. 上传合并后的状态到云端（不修改本地）
+            // 深拷贝本地状态时需要使用结构化克隆
+            const mergedState = structuredClone(localState); 
+            console.log("Before merge - local:", localState, "remote:", parsedRemoteState);
+            
+            // 合并方向需要特别注意：本地副本保留，云端数据优先
+            mergeAppState(mergedState, parsedRemoteState); 
+            console.log("After merge:", mergedState);
+    
+            // 确保使用映射后的用户名上传
             await client.set(cloudUsername, JSON.stringify(mergedState));
+            console.log("[Sync] Merged state uploaded to:", cloudUsername);
           } else {
-            // 非KKK用户处理流程
-            // 1. 完全使用云端状态覆盖本地
+            // 覆盖本地后需要刷新页面
+            console.log("Overriding local state with remote:", parsedRemoteState);
             setLocalAppState(parsedRemoteState);
-            // 2. 上传最新的本地状态（即刚设置的云端数据）
             await client.set(cloudUsername, JSON.stringify(parsedRemoteState));
+            location.reload(); // 确保界面刷新
           }
           
-          // 标记同步时间
           this.markSyncTime();
+          
+          // 验证同步后的云端状态
+          const verifyState = await client.get(cloudUsername);
+          console.log("Post-sync cloud state:", JSON.parse(verifyState));
         }
       } catch (e) {
-        console.log("[Sync] Failed to sync with remote state", e);
+        console.error("[Sync Error]", e);
         throw e;
       }
     },
