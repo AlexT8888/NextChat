@@ -89,10 +89,12 @@ export function AuthPage() {
             type="text"
             placeholder={Locale.Settings.Access.DeepSeek.ApiKey.Placeholder}
             onChange={(e) => {
-              accessStore.update(
-                (access) => (access.deepseekApiKey = e.currentTarget.value),
-                (access) => (access.googleApiKey = e.currentTarget.value),
-                (access) => (access.anthropicApiKey = e.currentTarget.value),
+              accessStore.update((access) => {
+                access.deepseekApiKey = e.currentTarget.value;
+                access.googleApiKey = e.currentTarget.value;
+                access.anthropicApiKey = e.currentTarget.value;
+                return access;
+              });
               );
             }}
           />
