@@ -139,7 +139,7 @@ export const useSyncStore = createPersistStore(
         console.error("[Sync] failed", e);
         throw e;
       }
-    }
+    },
 
 
     async check() {
