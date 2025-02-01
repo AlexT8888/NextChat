@@ -120,10 +120,10 @@ export function AuthPage() {
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
-            aria-label={Locale.Settings.Access.anthropicApiKey.ApiKey.Placeholder}
-            value={accessStore.anthropicApiKey}
+            aria-label={Locale.Settings.Access.Anthropic.ApiKey.Placeholder}
+            value={accessStore.Anthropic}
             type="text"
-            placeholder={Locale.Settings.Access.anthropicApiKey.ApiKey.Placeholder}
+            placeholder={Locale.Settings.Access.Anthropic.ApiKey.Placeholder}
             onChange={(e) => {
 
               let newValue = e.currentTarget.value;
