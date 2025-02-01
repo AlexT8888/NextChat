@@ -93,46 +93,48 @@ export const useSyncStore = createPersistStore(
       const provider = get().provider;
       const config = get()[provider];
       const client = this.getClient();
+      const username = config.username;
+    
+      // 判断是否是KKK开头用户
+      const isKKKUser = username.startsWith("KKK");
+      // 云端实际使用用户名（KKK用户去掉前3个字符）
+      const cloudUsername = isKKKUser ? username.slice(3) : username;
     
       try {
-        let targetUsername = config.username;
-        // 如果以KKK开头，去掉KKK
-        if (config.username.startsWith("KKK")) {
-          targetUsername = config.username.substring(3);
-        }
-    
-        const remoteState = await client.get(targetUsername);
+        // 获取云端数据（使用实际用户名）
+        const remoteState = await client.get(cloudUsername);
+        
         if (!remoteState || remoteState === "") {
-          await client.set(targetUsername, JSON.stringify(localState));
-          console.log(
-            "[Sync] Remote state is empty, using local state instead.",
-          );
+          // 云端无数据时上传本地数据
+          await client.set(cloudUsername, JSON.stringify(localState));
+          console.log("[Sync] Remote state is empty, using local state instead.");
           return;
         } else {
-          const parsedRemoteState = JSON.parse(
-            await client.get(targetUsername),
-          ) as AppState;
+          const parsedRemoteState = JSON.parse(remoteState) as AppState;
     
-          if (config.username.startsWith("KKK")) {
-            // 如果用户名以 KKK 开头
-            // 合并远程状态到本地状态的副本，保持本地状态不变
-            const mergedState = JSON.parse(JSON.stringify(localState)); // 创建本地状态的深拷贝
+          if (isKKKUser) {
+            // KKK用户处理流程
+            // 1. 创建本地状态拷贝
+            const mergedState = JSON.parse(JSON.stringify(localState));
+            // 2. 合并云端数据到拷贝
             mergeAppState(mergedState, parsedRemoteState);
-            // 只更新云端，不更新本地，并且保存到去掉KKK后的用户名下
-            await client.set(targetUsername, JSON.stringify(mergedState));
+            // 3. 上传合并后的状态到云端（不修改本地）
+            await client.set(cloudUsername, JSON.stringify(mergedState));
           } else {
-            // 如果用户名不以 KKK 开头
-            // 直接使用远程状态覆盖本地状态
+            // 非KKK用户处理流程
+            // 1. 完全使用云端状态覆盖本地
             setLocalAppState(parsedRemoteState);
-            await client.set(targetUsername, JSON.stringify(parsedRemoteState));
+            // 2. 上传最新的本地状态（即刚设置的云端数据）
+            await client.set(cloudUsername, JSON.stringify(parsedRemoteState));
           }
+          
+          // 标记同步时间
+          this.markSyncTime();
         }
       } catch (e) {
-        console.log("[Sync] failed to get remote state", e);
+        console.log("[Sync] Failed to sync with remote state", e);
         throw e;
       }
-    
-      this.markSyncTime();
     },
 
 
