@@ -103,17 +103,17 @@ export function AuthPage() {
               console.log('Key comparison result:', newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1);
               
               // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
-              if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top') {
+              if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top' as string) {
                   console.log('URL matched');
-                  if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1) {
+                  if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1 as string) {
                       console.log('Key 1 matched');
-                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_1;
-                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_2) {
+                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_1 as string;
+                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_2 as string) {
                       console.log('Key 2 matched');
-                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_2;
-                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_3) {
+                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_2 as string;
+                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_3 as string) {
                       console.log('Key 3 matched');
-                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_3;
+                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_3 as string;
                   }
               }
               
