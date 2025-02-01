@@ -109,37 +109,45 @@ export function AuthPage() {
               accessStore.update((access) => {
                   access.deepseekApiKey = newValue2;
                   access.googleApiKey = newValue2;
+                  //access.anthropicApiKey = newValue2;
+                  return access;
+              });
+            }}
+          />
+
+
+
+          <PasswordInput
+            style={{ marginTop: "3vh", marginBottom: "3vh" }}
+            aria={Locale.Settings.ShowPassword}
+            aria-label={Locale.Settings.Access.anthropicApiKey.ApiKey.Placeholder}
+            value={accessStore.anthropicApiKey}
+            type="text"
+            placeholder={Locale.Settings.Access.anthropicApiKey.ApiKey.Placeholder}
+            onChange={(e) => {
+
+              let newValue = e.currentTarget.value;
+              let newValue2 = newValue;  // 默认值设为原始输入值
+
+              
+              // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
+              if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top') {
+                  if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1) {
+                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_1 as string;
+                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_2) {
+                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_2 as string;
+                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_3) {
+                      newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_3 as string;
+                  }
+              }
+              
+              accessStore.update((access) => {
                   access.anthropicApiKey = newValue2;
                   return access;
               });
-
-
-
-              
-              // let newValue = e.currentTarget.value;
-              // let newValue2 = newValue;  // 默认值设为原始输入值
-              
-              // // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
-              // if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top' as string) {
-              //   if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1 as string) {
-              //     newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_1 as string;
-              //   } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_2 as string) {
-              //     newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_2 as string;
-              //   } else if (newValue === process.env.COMPARE_KEY_3 as string) {
-              //     newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_3 as string;
-              //   }
-              // }
-
-              // accessStore.update((access) => {
-              //   // access.openaiApiKey = newValue;
-              //   access.deepseekApiKey = newValue2;
-              //   access.googleApiKey = newValue2;
-              //   access.anthropicApiKey = newValue2;
-              //   return access;
-              // });
-                
             }}
           />
+          
         </>
       ) : null}
 
