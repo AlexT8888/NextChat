@@ -94,42 +94,36 @@ export const useSyncStore = createPersistStore(
       const config = get()[provider];
       const client = this.getClient();
     
-      // [+] 新增部分：处理用户名
+      // 用户名处理逻辑
       const isKKKCase = config.username.startsWith("KKK");
-      const realUsername = isKKKCase ? 
-        config.username.replace(/^KKK/, "") : // 删除开头的KKK
+      const realUsername = isKKKCase ?
+        config.username.replace(/^KKK/, "") : 
         config.username;
     
       try {
-        // [!] 修改点：使用处理后的用户名获取数据
+        // [!] 统一使用处理后的用户名
         let remoteState = await client.get(realUsername);
     
         if (isKKKCase) {
-          // [+] KKK专属逻辑：云端副本合并本地后上传
+          // CASE 1: KKK模式同步（本地合并到云端）
           if (!remoteState) {
             await client.set(realUsername, JSON.stringify(localState));
-            console.log("[Sync][KKK] Upload local state to new cloud");
+            console.log("[Sync][KKK] Initial upload to cloud");
           } else {
-            // [!] 深拷贝远程状态避免污染原始数据
             const remoteCopy: AppState = JSON.parse(remoteState);
-            
-            // [!] 将本地合并到云端副本（第一个参数会被修改）
-            mergeAppState(remoteCopy, localState);
-            
-            // [!] 上传合并后的云状态
+            mergeAppState(remoteCopy, localState); // 将本地合并到云端副本
             await client.set(realUsername, JSON.stringify(remoteCopy));
-            console.log("[Sync][KKK] Merged local data into cloud");
+            console.log("[Sync][KKK] Merged local into cloud");
           }
-          
         } else {
-          // [-] 原有逻辑保持不变
+          // CASE 2: 正常模式同步（云端合并到本地）
           if (!remoteState || remoteState === "") {
             await client.set(realUsername, JSON.stringify(localState));
-            console.log("[Sync] Remote state is empty, using local state");
+            console.log("[Sync] Initial upload");
           } else {
             const parsedRemoteState = JSON.parse(remoteState) as AppState;
-            mergeAppState(localState, parsedRemoteState);
-            setLocalAppState(localState);
+            mergeAppState(localState, parsedRemoteState); // 将云端合并到本地
+            setLocalAppState(localState);                 // [!] 仅在非KKK时修改本地
             await client.set(realUsername, JSON.stringify(localState));
           }
         }
@@ -139,7 +133,8 @@ export const useSyncStore = createPersistStore(
         console.error("[Sync] failed", e);
         throw e;
       }
-    },
+    }
+
 
 
     async check() {
