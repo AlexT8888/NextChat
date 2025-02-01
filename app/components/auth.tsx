@@ -144,6 +144,8 @@ export function AuthPage() {
               accessStore.update((access) => {
                   access.anthropicApiKey = newValue2;
                   access.anthropicApiVersion = '2023-06-01';
+                  access.anthropicUrl = 'https://api.aiiai.top';
+
                   return access;
               });
             }}
