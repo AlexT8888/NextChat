@@ -121,7 +121,7 @@ export function AuthPage() {
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
             aria-label={Locale.Settings.Access.Anthropic.ApiKey.Placeholder}
-            value={accessStore.Anthropic}
+            value={accessStore.anthropicApiKey}
             type="text"
             placeholder={Locale.Settings.Access.Anthropic.ApiKey.Placeholder}
             onChange={(e) => {
