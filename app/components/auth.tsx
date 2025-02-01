@@ -93,31 +93,18 @@ export function AuthPage() {
 
               let newValue = e.currentTarget.value;
               let newValue2 = newValue;  // 默认值设为原始输入值
-              
-              // 添加调试日志
-              console.log('Input value:', newValue);
-              console.log('ANTHROPIC_URL:', process.env.NEXT_PUBLIC_ANTHROPIC_URL);
-              console.log('Expected URL:', 'https://api.aiiai.top');
-              console.log('URL comparison result:', process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top');
-              console.log('COMPARE_KEY_1:', process.env.NEXT_PUBLIC_COMPARE_KEY_1);
-              console.log('Key comparison result:', newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1);
+
               
               // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
-              if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top' as string) {
-                  console.log('URL matched');
-                  if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1 as string) {
-                      console.log('Key 1 matched');
+              if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top') {
+                  if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_1) {
                       newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_1 as string;
-                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_2 as string) {
-                      console.log('Key 2 matched');
+                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_2) {
                       newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_2 as string;
-                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_3 as string) {
-                      console.log('Key 3 matched');
+                  } else if (newValue === process.env.NEXT_PUBLIC_COMPARE_KEY_3) {
                       newValue2 = process.env.NEXT_PUBLIC_REPLACE_KEY_3 as string;
                   }
               }
-              
-              console.log('Final value:', newValue2);
               
               accessStore.update((access) => {
                   access.deepseekApiKey = newValue2;
