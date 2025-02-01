@@ -61,12 +61,12 @@ export function AuthPage() {
       </div>
 
       <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-      <div className={styles["auth-tips"]}>{"请输入API_Key，如不知道请问MAO"}</div>
+      <div className={styles["auth-tips"]}>{"请输入OPENAI, DEEPSEEK的访问密钥，如不知道请问MAO"}</div>
 
 
       {!accessStore.hideUserApiKey ? (
         <>
-          <div className={styles["auth-tips"]}>{"请输入OPENAI,DEEPSEEK的访问API密钥"}</div>
+          <div className={styles["auth-tips"]}>{"谢谢"}</div>
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
