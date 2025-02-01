@@ -97,12 +97,12 @@ export function AuthPage() {
               
               // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
               if (process.env.ANTHROPIC_URL === 'https://api.aiiai.top') {
-                if (newValue === process.env.COMPARE_KEY_1) {
+                if (newValue === process.env.COMPARE_KEY_1 as string) {
                   newValue2 = process.env.REPLACE_KEY_1 as string;
                 } else if (newValue === process.env.COMPARE_KEY_2 as string) {
-                  newValue2 = process.env.REPLACE_KEY_2;
+                  newValue2 = process.env.REPLACE_KEY_2 as string;
                 } else if (newValue === process.env.COMPARE_KEY_3 as string) {
-                  newValue2 = process.env.REPLACE_KEY_3;
+                  newValue2 = process.env.REPLACE_KEY_3 as string;
                 }
               }
 
