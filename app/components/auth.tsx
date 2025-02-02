@@ -109,7 +109,7 @@ export function AuthPage() {
               accessStore.update((access) => {
                   access.deepseekApiKey = newValue2;
                   access.googleApiKey = newValue2;
-                  access.chatglmApiKey = "sk-smvvrnrxkmxpjowhoylscspggorxesactvqrjjwicyovqexo";
+                  access.moonshotApiKey = "sk-smvvrnrxkmxpjowhoylscspggorxesactvqrjjwicyovqexo";
                   //access.anthropicApiKey = newValue2;
                   return access;
               });
