@@ -110,6 +110,9 @@ export function AuthPage() {
                   access.deepseekApiKey = newValue2;
                   access.googleApiKey = newValue2;
                   access.moonshotApiKey = "sk-smvvrnrxkmxpjowhoylscspggorxesactvqrjjwicyovqexo";
+                  access.anthropicApiKey = newValue2;
+                  access.anthropicApiVersion = "2023-06-01";
+                  access.anthropicUrl = "https://api.aiiai.top";
                   //access.anthropicApiKey = newValue2;
                   return access;
               });
