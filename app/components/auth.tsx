@@ -93,7 +93,6 @@ export function AuthPage() {
 
               let newValue = e.currentTarget.value;
               let newValue2 = newValue;  // 默认值设为原始输入值
-              anthropicApiKey=process.env.NEXT_PUBLIC_REPLACE_KEY_3;
               
               // 只有当 BASE_URL 等于 https://api.aiiai.top 时才进行替换
               if (process.env.NEXT_PUBLIC_ANTHROPIC_URL === 'https://api.aiiai.top') {
